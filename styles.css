@@ -52,7 +52,7 @@ body {
   letter-spacing: -0.02em;
 }
 
-/* BARRA DE PROGRESO MÁS RESALTADA (Mejora 2) */
+/* BARRA DE PROGRESO MÁS RESALTADA */
 .progress-bar {
   display: flex;
   justify-content: space-between;
@@ -125,7 +125,7 @@ body {
   font-weight: 600;
 }
 
-/* TEXTOS GUÍA (Mejora 2) */
+/* TEXTOS GUÍA */
 .guide-text {
   font-size: 0.95rem;
   color: var(--muted);
@@ -133,33 +133,31 @@ body {
   font-style: italic;
 }
 
-/* MINI CARRITO EN ESQUINA INFERIOR DERECHA (Mejora 1) */
+/* MINI CARRITO - SOLO ICONO VERDE (sin marco blanco) */
 .mini-carrito {
   position: fixed;
-  bottom: 20px;
+  top: 20px;
   right: 20px;
   z-index: 200;
-  background: white;
-  border-radius: 9999px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  padding: 8px 20px;
+  background: transparent;
 }
 
 .btn-carrito-float {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: var(--green);
   color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 10px 18px;
   border-radius: 9999px;
   font-weight: 600;
   font-size: 1rem;
+  box-shadow: 0 4px 15px rgba(6, 193, 103, 0.3);
   cursor: pointer;
 }
 
-/* BOTÓN CONFIRMAR DESACTIVADO CUANDO CARRITO VACÍO (Mejora 3) */
+/* BOTÓN CONFIRMAR DESACTIVADO CUANDO CARRITO VACÍO */
 .btn-primary:disabled {
   background: #ccc;
   cursor: not-allowed;
