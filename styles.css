@@ -52,34 +52,124 @@ body {
   letter-spacing: -0.02em;
 }
 
-.steps {
+/* BARRA DE PROGRESO MÁS RESALTADA (Mejora 2) */
+.progress-bar {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0.5rem;
+  background: #e6f0ff;
+  margin: 0 -1rem;
+  position: relative;
 }
 
-.step {
-  padding: 6px 14px;
-  border-radius: 9999px;
-  background: #333;
-  color: #ccc;
-  font-size: 0.85rem;
+.progress-bar::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: 32px;
+  right: 32px;
+  height: 4px;
+  background: #a3c4ff;
+  z-index: 1;
+}
+
+.step-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  max-width: 80px;
+  text-align: center;
 }
 
-.step.active {
-  background: var(--green);
+.step-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #a3c4ff;
+  color: #0d6efd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.3s;
+}
+
+.step-item.active .step-circle,
+.step-item.completed .step-circle {
+  border-color: #06c167;
+  background: #06c167;
   color: white;
 }
 
-.step-ico {
-  filter: brightness(0) invert(1);
+.step-item.completed .step-circle::after {
+  content: '✓';
+  font-size: 1.4rem;
 }
 
-/* Panels */
+.step-label {
+  font-size: 0.78rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.step-item.active .step-label,
+.step-item.completed .step-label {
+  color: #06c167;
+  font-weight: 600;
+}
+
+/* TEXTOS GUÍA (Mejora 2) */
+.guide-text {
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+/* MINI CARRITO EN ESQUINA INFERIOR DERECHA (Mejora 1) */
+.mini-carrito {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 200;
+  background: white;
+  border-radius: 9999px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  padding: 8px 20px;
+}
+
+.btn-carrito-float {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--green);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* BOTÓN CONFIRMAR DESACTIVADO CUANDO CARRITO VACÍO (Mejora 3) */
+.btn-primary:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* ====================== TUS ESTILOS ORIGINALES ====================== */
+
+.steps { display: none; }
+
 .main {
   flex: 1;
   padding: 1rem;
@@ -112,7 +202,6 @@ body {
   margin-bottom: 1rem;
 }
 
-/* Filtros y tarjetas */
 .filtros label {
   display: block;
   margin-bottom: 6px;
@@ -158,7 +247,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* Menú platos */
 .lista-platos {
   list-style: none;
   padding: 0;
@@ -186,232 +274,6 @@ body {
 .plato-precio {
   color: var(--green);
   font-weight: 700;
-}
-
-.quantity-control {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #f1f1f1;
-  border-radius: 9999px;
-  padding: 4px;
-}
-
-.qty-btn {
-  width: 32px;
-  height: 32px;
-  border: none;
-  background: white;
-  border-radius: 50%;
-  font-size: 1.1rem;
-  cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.qty {
-  min-width: 24px;
-  text-align: center;
-  font-weight: 600;
-}
-
-/* Resumen */
-.lista-resumen {
-  list-style: none;
-  padding: 0;
-  margin: 1rem 0;
-}
-
-.resumen-line {
-  display: flex;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px dashed var(--border);
-}
-
-.qty-control-small {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 6px;
-  font-size: 0.9rem;
-}
-
-.btn-eliminar {
-  background: none;
-  border: none;
-  color: #e74c3c;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
-/* Botones */
-.btn {
-  padding: 14px 24px;
-  border: none;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s;
-}
-
-.btn-primary {
-  background: var(--green);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--green-dark);
-}
-
-.btn-ghost {
-  background: transparent;
-  border: 1.5px solid var(--border);
-  color: var(--muted);
-}
-
-.btn-back {
-  background: none;
-  border: none;
-  color: var(--muted);
-  padding: 8px 0;
-  font-size: 0.95rem;
-  cursor: pointer;
-}
-
-/* Mini carrito flotante */
-.mini-carrito {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 200;
-  background: white;
-  border-radius: 9999px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  padding: 8px 16px;
-}
-
-.btn-carrito-float {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--green);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 9999px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.toast {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #333;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 9999px;
-  font-size: 0.95rem;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-  opacity: 1;
-  transition: opacity 0.3s;
-  z-index: 300;
-}
-
-.footer {
-  padding: 1rem;
-  text-align: center;
-  font-size: 0.8rem;
-  color: var(--muted);
-  background: var(--card);
-  border-top: 1px solid var(--border);
-}
-/* === BARRA DE PROGRESO NUEVA === */
-.progress-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 0.5rem 0.5rem;
-  position: relative;
-  background: #f8f9fa;
-  margin: 0 -1rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.progress-bar::before {
-  content: '';
-  position: absolute;
-  top: 28px;
-  left: 30px;
-  right: 30px;
-  height: 3px;
-  background: #e0e0e0;
-  z-index: 1;
-}
-
-.step-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  position: relative;
-  z-index: 2;
-  flex: 1;
-  max-width: 70px;
-  text-align: center;
-}
-
-.step-circle {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 3px solid #cccccc;
-  color: #888;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 1.05rem;
-  transition: all 0.3s;
-}
-
-.step-item.active .step-circle {
-  border-color: #06c167;
-  background: #06c167;
-  color: white;
-}
-
-.step-label {
-  font-size: 0.78rem;
-  color: #666;
-  font-weight: 500;
-}
-
-.step-item.active .step-label {
-  color: #06c167;
-  font-weight: 600;
-}
-
-/* Ocultar la barra antigua */
-.steps { display: none; }
-
-/* === MEJORA EN PLATOS: Cantidad visible === */
-.plato-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.plato-info {
-  flex: 1;
 }
 
 .quantity-control {
@@ -448,43 +310,96 @@ body {
 .qty-btn:hover {
   background: #f0f0f0;
 }
-/* Mejoras responsivas */
-@media (min-width: 600px) {
-  .mini-carrito { bottom: 30px; }
-  .sticky-cta { position: static; }
+
+.lista-resumen {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
 }
 
-.nota-pedido {
-  margin: 1.5rem 0;
-  background: #f9f9f9;
-  padding: 16px;
+.resumen-line {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.qty-control-small {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 0.9rem;
+}
+
+.btn-eliminar {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btn {
+  padding: 14px 24px;
+  border: none;
   border-radius: 12px;
-  border: 1px solid #e5e5e5;
-}
-
-.nota-pedido label {
-  display: block;
-  margin-bottom: 6px;
   font-weight: 600;
-  color: #333;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--green);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--green-dark);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: var(--muted);
+  padding: 8px 0;
   font-size: 0.95rem;
+  cursor: pointer;
 }
 
-.nota-pedido select,
-.nota-pedido textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font: inherit;
-  margin-bottom: 12px;
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 9999px;
+  font-size: 0.95rem;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  opacity: 1;
+  transition: opacity 0.3s;
+  z-index: 300;
 }
 
-.nota-pedido textarea {
-  min-height: 80px;
-  resize: vertical;
+.footer {
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: var(--card);
+  border-top: 1px solid var(--border);
 }
 
+.nota-pedido,
 .notas-container {
   margin: 1.5rem 0;
   background: #f9f9f9;
@@ -493,28 +408,18 @@ body {
   border: 1px solid #e5e5e5;
 }
 
-.notas-container h3 {
-  margin: 0 0 12px 0;
-  font-size: 1.05rem;
-  color: #333;
-}
-
-.nota-restaurante {
-  margin-bottom: 16px;
-}
-
-.nota-restaurante:last-child {
-  margin-bottom: 0;
-}
-
+.nota-pedido label,
+.notas-container h3,
 .nota-restaurante label {
   display: block;
   margin-bottom: 6px;
   font-weight: 600;
-  color: #222;
+  color: #333;
+  font-size: 0.95rem;
 }
 
-.nota-restaurante textarea {
+.nota-restaurante textarea,
+.nota-pedido textarea {
   width: 100%;
   min-height: 70px;
   padding: 12px;

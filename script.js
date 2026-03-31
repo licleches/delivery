@@ -1,8 +1,5 @@
 /**
- * ComidaRápida - Prototipo Delivery (Versión FINAL corregida)
- * - + y - en resumen ahora funcionan correctamente
- * - Confirmar pedido funciona aunque haya productos
- * - Seguir pidiendo funciona
+ * ComidaRápida - Prototipo FINAL con todas las mejoras aplicadas
  */
 
 (function () {
@@ -16,22 +13,14 @@
   ];
 
   const MENU = {
-    r1: [
-      { id: 'm1', nombre: 'Margarita', precio: 8.5, img: './assets/dish-m1.svg' },
-      { id: 'm2', nombre: 'Cuatro quesos', precio: 10.9, img: './assets/dish-m2.svg' }
-    ],
-    r2: [
-      { id: 'm3', nombre: 'Menú maki (12 pzs)', precio: 14.0, img: './assets/dish-m3.svg' },
-      { id: 'm4', nombre: 'Yakisoba', precio: 9.5, img: './assets/dish-m4.svg' }
-    ],
-    r3: [
-      { id: 'm5', nombre: 'Clásica + patatas', precio: 11.0, img: './assets/dish-m5.svg' },
-      { id: 'm6', nombre: 'Veggie', precio: 10.5, img: './assets/dish-m6.svg' }
-    ],
-    r4: [
-      { id: 'm7', nombre: 'Calzone', precio: 9.0, img: './assets/dish-m7.svg' },
-      { id: 'm8', nombre: 'Prosciutto', precio: 11.5, img: './assets/dish-m8.svg' }
-    ]
+    r1: [{ id: 'm1', nombre: 'Margarita', precio: 8.5, img: './assets/dish-m1.svg' },
+         { id: 'm2', nombre: 'Cuatro quesos', precio: 10.9, img: './assets/dish-m2.svg' }],
+    r2: [{ id: 'm3', nombre: 'Menú maki (12 pzs)', precio: 14.0, img: './assets/dish-m3.svg' },
+         { id: 'm4', nombre: 'Yakisoba', precio: 9.5, img: './assets/dish-m4.svg' }],
+    r3: [{ id: 'm5', nombre: 'Clásica + patatas', precio: 11.0, img: './assets/dish-m5.svg' },
+         { id: 'm6', nombre: 'Veggie', precio: 10.5, img: './assets/dish-m6.svg' }],
+    r4: [{ id: 'm7', nombre: 'Calzone', precio: 9.0, img: './assets/dish-m7.svg' },
+         { id: 'm8', nombre: 'Prosciutto', precio: 11.5, img: './assets/dish-m8.svg' }]
   };
 
   let restauranteActual = null;
@@ -81,7 +70,6 @@
     if (panel === els.stepProd) paso = 2;
     else if (panel === els.stepRes) paso = 3;
     else if (panel === els.stepConf) paso = 4;
-
     actualizarProgressBar(paso);
   }
 
@@ -170,19 +158,12 @@
   function cambiarCantidad(idPlato, delta) {
     let item = pedido.find(i => i.idPlato === idPlato);
     if (!item) return;
-
     item.cantidad = Math.max(0, item.cantidad + delta);
-    if (item.cantidad === 0) {
-      pedido = pedido.filter(i => i.idPlato !== idPlato);
-    }
+    if (item.cantidad === 0) pedido = pedido.filter(i => i.idPlato !== idPlato);
 
     actualizarCantidadVisual(idPlato, item.cantidad);
     actualizarCarritoUI();
-
-    // Actualizar resumen si estamos viéndolo
-    if (els.stepRes && !els.stepRes.hidden) {
-      pintarResumen();
-    }
+    if (els.stepRes && !els.stepRes.hidden) pintarResumen();
   }
 
   function totalPedido() {
@@ -203,10 +184,12 @@
     if (pedido.length === 0) {
       if (els.resumenVacio) els.resumenVacio.hidden = false;
       if (els.notasContainer) els.notasContainer.innerHTML = '<h3>Notas por restaurante</h3><p class="muted">No hay productos en el pedido.</p>';
+      if (els.btnComprar) els.btnComprar.disabled = true;
       return;
     }
 
     if (els.resumenVacio) els.resumenVacio.hidden = true;
+    if (els.btnComprar) els.btnComprar.disabled = false;
 
     const pedidoPorRest = {};
     pedido.forEach(item => {
@@ -267,7 +250,6 @@
           notasPorRestaurante[restId] = textarea.value.trim();
         });
       }
-
       els.notasContainer.appendChild(div);
     });
   }
@@ -288,113 +270,80 @@
     setTimeout(() => toast.remove(), 1800);
   }
 
-  // ====================== EVENTOS ======================
   function setupEventListeners() {
-    // Restaurantes
-    if (els.listaRest) {
-      els.listaRest.addEventListener('click', e => {
-        const btn = e.target.closest('[data-rest]');
-        if (btn) abrirMenu(btn.dataset.rest);
-      });
-    }
+    if (els.listaRest) els.listaRest.addEventListener('click', e => {
+      const btn = e.target.closest('[data-rest]');
+      if (btn) abrirMenu(btn.dataset.rest);
+    });
 
-    // Filtro
-    if (els.filtro) {
-      els.filtro.addEventListener('change', filtrarRestaurantes);
-    }
+    if (els.filtro) els.filtro.addEventListener('change', filtrarRestaurantes);
 
-    // Cantidad en Menú
-    if (els.listaPlatos) {
-      els.listaPlatos.addEventListener('click', e => {
-        const btn = e.target.closest('.qty-btn');
-        if (!btn) return;
-        const id = btn.dataset.id;
-        const plato = Object.values(MENU).flat().find(p => p.id === id);
-        if (!plato) return;
+    if (els.listaPlatos) els.listaPlatos.addEventListener('click', e => {
+      const btn = e.target.closest('.qty-btn');
+      if (!btn) return;
+      const id = btn.dataset.id;
+      const plato = Object.values(MENU).flat().find(p => p.id === id);
+      if (!plato) return;
+      if (btn.classList.contains('plus')) agregarPlato(id, plato.nombre, plato.precio, plato.img);
+      if (btn.classList.contains('minus')) cambiarCantidad(id, -1);
+    });
 
-        if (btn.classList.contains('plus')) agregarPlato(id, plato.nombre, plato.precio, plato.img);
-        if (btn.classList.contains('minus')) cambiarCantidad(id, -1);
-      });
-    }
+    if (els.listaResumen) els.listaResumen.addEventListener('click', e => {
+      const id = e.target.dataset.id;
+      if (!id) return;
 
-    // Cantidad en Resumen (+, -, Eliminar)
-    if (els.listaResumen) {
-      els.listaResumen.addEventListener('click', e => {
-        const id = e.target.dataset.id;
-        if (!id) return;
-
-        if (e.target.classList.contains('plus')) {
-          cambiarCantidad(id, 1);
-        }
-        if (e.target.classList.contains('minus')) {
-          cambiarCantidad(id, -1);
-        }
-        if (e.target.classList.contains('btn-eliminar')) {
+      if (e.target.classList.contains('plus')) cambiarCantidad(id, 1);
+      if (e.target.classList.contains('minus')) cambiarCantidad(id, -1);
+      if (e.target.classList.contains('btn-eliminar')) {
+        if (confirm('¿Estás seguro de eliminar este producto?')) {
           pedido = pedido.filter(i => i.idPlato !== id);
           pintarResumen();
           actualizarCarritoUI();
         }
-      });
-    }
+      }
+    });
 
-    // Otros botones
     if (els.btnVolverRest) els.btnVolverRest.addEventListener('click', () => mostrarPanel(els.stepRest));
     if (els.btnVerCarrito) els.btnVerCarrito.addEventListener('click', () => { pintarResumen(); mostrarPanel(els.stepRes); });
     if (els.btnAbrirCarrito) els.btnAbrirCarrito.addEventListener('click', () => { pintarResumen(); mostrarPanel(els.stepRes); });
 
-    // Seguir pidiendo
-    if (els.btnSeguir) {
-      els.btnSeguir.addEventListener('click', () => {
-        if (restauranteActual) {
-          abrirMenu(restauranteActual);
-        } else {
-          mostrarPanel(els.stepRest);
+    if (els.btnSeguir) els.btnSeguir.addEventListener('click', () => {
+      if (restauranteActual) abrirMenu(restauranteActual);
+      else mostrarPanel(els.stepRest);
+    });
+
+    if (els.btnComprar) els.btnComprar.addEventListener('click', () => {
+      if (pedido.length === 0) {
+        alert('Añade al menos un plato antes de confirmar.');
+        return;
+      }
+
+      let mensaje = `Tu pedido por ${formatEuros(totalPedido())} está en preparación.\n\n`;
+      Object.keys(notasPorRestaurante).forEach(restId => {
+        const rest = RESTAURANTES.find(r => r.id === restId);
+        if (rest && notasPorRestaurante[restId]) {
+          mensaje += `Nota para ${rest.nombre}: "${notasPorRestaurante[restId]}"\n`;
         }
       });
-    }
 
-    // Confirmar pedido (CORREGIDO)
-    if (els.btnComprar) {
-      els.btnComprar.addEventListener('click', () => {
-        if (pedido.length === 0) {
-          alert('Añade al menos un plato antes de confirmar.');
-          return;
-        }
+      if (els.msgConfirm) els.msgConfirm.textContent = mensaje + "Tiempo estimado: 30-40 minutos.";
 
-        let mensaje = `Tu pedido por ${formatEuros(totalPedido())} está en preparación.\n\n`;
+      pedido = [];
+      notasPorRestaurante = {};
+      restauranteActual = null;
+      actualizarCarritoUI();
+      mostrarPanel(els.stepConf);
+    });
 
-        Object.keys(notasPorRestaurante).forEach(restId => {
-          const rest = RESTAURANTES.find(r => r.id === restId);
-          if (rest && notasPorRestaurante[restId]) {
-            mensaje += `Nota para ${rest.nombre}: "${notasPorRestaurante[restId]}"\n`;
-          }
-        });
-
-        if (els.msgConfirm) {
-          els.msgConfirm.textContent = mensaje + "Tiempo estimado: 30-40 minutos.";
-        }
-
-        // Reiniciar
-        pedido = [];
-        notasPorRestaurante = {};
-        restauranteActual = null;
-        actualizarCarritoUI();
-        mostrarPanel(els.stepConf);
-      });
-    }
-
-    if (els.btnNuevo) {
-      els.btnNuevo.addEventListener('click', () => {
-        restauranteActual = null;
-        pedido = [];
-        notasPorRestaurante = {};
-        actualizarCarritoUI();
-        mostrarPanel(els.stepRest);
-      });
-    }
+    if (els.btnNuevo) els.btnNuevo.addEventListener('click', () => {
+      restauranteActual = null;
+      pedido = [];
+      notasPorRestaurante = {};
+      actualizarCarritoUI();
+      mostrarPanel(els.stepRest);
+    });
   }
 
-  // Inicialización
   function init() {
     cacheElements();
     setupEventListeners();
@@ -404,5 +353,4 @@
   }
 
   window.addEventListener('load', init);
-
 })();
